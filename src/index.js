@@ -14,7 +14,9 @@ import {
   arbitrum,
   base,
   polygonMumbai,
-  sepolia, // Import Polygon Mumbai
+  sepolia,
+  baseSepolia,
+  polygonAmoy, 
 } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
@@ -22,7 +24,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 const config = getDefaultConfig({
   appName: "Voting App",
   projectId: "YOUR_PROJECT_ID",
-  chains: [mainnet, polygon, optimism, arbitrum, base, polygonMumbai, sepolia], // Add polygonMumbai here
+  chains: [mainnet, polygon, optimism, arbitrum, base, polygonMumbai, polygonAmoy, sepolia, baseSepolia], // Add polygonMumbai here
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
 
@@ -41,7 +43,9 @@ root.render(
           arbitrum,
           base,
           polygonMumbai,
+          polygonAmoy,
           sepolia,
+          baseSepolia
         ]}
       >
         <React.StrictMode>

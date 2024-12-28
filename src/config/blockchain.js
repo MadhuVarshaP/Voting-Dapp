@@ -1,62 +1,102 @@
 import Web3 from 'web3';
-
-// Create Web3 instance
-let web3;
+import { contractAddress, abi } from './abi';
+let electionContract;
+let web3 ;
 
 if (window.ethereum) {
   web3 = new Web3(window.ethereum);
-  window.ethereum.request({ method: 'eth_requestAccounts' }); // Request account access
+
+  // Request MetaMask account access
+  window.ethereum
+    .request({ method: 'eth_requestAccounts' })
+    .then(() => {
+      console.log("MetaMask connected.");
+    })
+    .catch((err) => {
+      console.error("MetaMask connection rejected:", err.message);
+    });
+
+  electionContract = new web3.eth.Contract(abi, contractAddress);
 } else {
-  console.error("MetaMask is not installed.");
+  console.error("MetaMask is not installed. Please install MetaMask to use this DApp.");
 }
-
-const contractAddress = "0x8513A6762e4C99DdF4f0938748a600bb73cdFF28";
-const electionContract = new web3.eth.Contract(abi, contractAddress);
-
-
 
 // Functions for interacting with the contract
 
 // Contest function
 export const contest = async (candidateName) => {
-  const accounts = await web3.eth.getAccounts();
-  await electionContract.methods.contest(candidateName).send({ from: accounts[0] });
-  console.log(`${candidateName} has been added as a candidate.`);
+  try {
+    const accounts = await web3.eth.getAccounts();
+    await electionContract.methods
+      .contest(candidateName)
+      .send({ from: accounts[0] });
+    console.log(`${candidateName} has been added as a candidate.`);
+  } catch (err) {
+    console.error("Error in contesting:", err.message);
+  }
 };
 
 // Start Election
 export const startElection = async () => {
-  const accounts = await web3.eth.getAccounts();
-  await electionContract.methods.startElection().send({ from: accounts[0] });
-  console.log("Election has started.");
+  try {
+    const accounts = await web3.eth.getAccounts();
+    await electionContract.methods
+      .startElection()
+      .send({ from: accounts[0] });
+    console.log("Election has started.");
+  } catch (err) {
+    console.error("Error in starting election:", err.message);
+  }
 };
 
 // Get Contestants
 export const getContestantList = async () => {
-  const contestants = await electionContract.methods.getContestantList().call();
-  console.log("Contestants:", contestants);
-  return contestants;
+  try {
+    const contestants = await electionContract.methods.getContestantList().call();
+    console.log("Contestants:", contestants);
+    return contestants;
+  } catch (err) {
+    console.error("Error in fetching contestant list:", err.message);
+    return [];
+  }
 };
 
 // Vote for Candidate
 export const voteForCandidate = async (candidateName) => {
-  const accounts = await web3.eth.getAccounts();
-  await electionContract.methods.votingForCandidates(candidateName).send({ from: accounts[0] });
-  console.log(`You voted for ${candidateName}.`);
+  try {
+    const accounts = await web3.eth.getAccounts();
+    await electionContract.methods
+      .votingForCandidates(candidateName)
+      .send({ from: accounts[0] });
+    console.log(`You voted for ${candidateName}.`);
+  } catch (err) {
+    console.error("Error in voting:", err.message);
+  }
 };
 
 // End Election
 export const endElection = async () => {
-  const accounts = await web3.eth.getAccounts();
-  await electionContract.methods.endElection().send({ from: accounts[0] });
-  console.log("Election has ended.");
+  try {
+    const accounts = await web3.eth.getAccounts();
+    await electionContract.methods
+      .endElection()
+      .send({ from: accounts[0] });
+    console.log("Election has ended.");
+  } catch (err) {
+    console.error("Error in ending election:", err.message);
+  }
 };
 
 // Get Winner
 export const getWinner = async () => {
-  const winner = await electionContract.methods.getWinner().call();
-  console.log("Winner:", winner);
-  return winner;
+  try {
+    const winner = await electionContract.methods.getWinner().call();
+    console.log("Winner:", winner);
+    return winner;
+  } catch (err) {
+    console.error("Error in fetching winner:", err.message);
+    return null;
+  }
 };
 
 // 1. contest
