@@ -5,24 +5,13 @@ import { contest, endElection, getContestantList, getWinner, startElection, vote
 const App = () => {
   const [candidateName, setCandidateName] = useState("");
   const [contestants, setContestants] = useState([]);
-  const [loading, setLoading] = useState (false);
+  const [loading, setLoading] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(""); 
-  const [winner, setWinner] = useState("")
-  // const handleContest = async () => {
-  //   await electionContract.methods
-  //     .contest(candidateName)
-  //     .send({ from: window.ethereum.selectedAddress });
-  //   alert(`${candidateName} has been registered as a candidate.`);
-  // };
-
-  // const fetchContestants = async () => {
-  //   const list = await electionContract.methods.getContestantList().call();
-  //   setContestants(list);
-  // };
+  const [winner, setWinner] = useState("");
 
   useEffect(() => {
-    startElection()
-  },[])
+    startElection();
+  }, []);
 
   useEffect(() => {
     const fetchCandidates = async () => {
@@ -46,9 +35,7 @@ const App = () => {
       setWinner("Unable to fetch winner.");
     }
   };
-  
 
-  // Handle voting for a candidate
   const handleVote = async () => {
     if (!selectedCandidate) {
       alert("Please select a candidate to vote for.");
@@ -68,85 +55,74 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800 flex flex-col items-center py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 text-gray-900 flex flex-col items-center py-8 px-4">
       <ConnectButton />
-      <h1 className="text-4xl font-bold text-blue-600 mt-4">Election DApp</h1>
-      
-      <div className="bg-white shadow-md rounded-lg p-6 mt-8 w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Register Candidate</h2>
+      <h1 className="text-5xl font-extrabold text-purple-800 mt-4 mb-6">Election DApp</h1>
+
+      <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-lg">
+        <h2 className="text-3xl font-bold mb-4 text-purple-700">Register Candidate</h2>
         <input
           type="text"
           value={candidateName}
           onChange={(e) => setCandidateName(e.target.value)}
           placeholder="Candidate Name"
-          className="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full border border-purple-300 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
         <button
           onClick={() => contest(candidateName)}
-          className="w-20 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+          className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition font-semibold"
         >
           Register
         </button>
       </div>
 
-      <div className="bg-white shadow-md rounded-lg p-6 mt-8 w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Contestant List</h2>
-        <ul className="list-disc pl-5 text-gray-600">
+      <div className="bg-white shadow-lg rounded-xl p-6 mt-8 w-full max-w-lg">
+        <h2 className="text-3xl font-bold mb-4 text-purple-700">Contestant List</h2>
+        <ul className="list-disc pl-5 text-gray-700">
           {contestants.map((name, index) => (
-            <li key={index} className="mb-2">
-              {name}
-            </li>
+            <li key={index} className="mb-2 text-lg">{name}</li>
           ))}
         </ul>
       </div>
-      <h1 className="text-2xl font-bold my-4">Vote for a Candidate</h1>
 
-      {/* Candidate Selection */}
-      <div className="mb-4">
-        <label className="block mb-2 font-medium">Select Candidate</label>
+      <div className="bg-white shadow-lg rounded-xl p-6 mt-8 w-full max-w-lg">
+        <h2 className="text-3xl font-bold mb-4 text-purple-700">Vote for a Candidate</h2>
+        <label className="block mb-2 text-lg font-medium">Select Candidate</label>
         <select
           value={selectedCandidate}
           onChange={(e) => setSelectedCandidate(e.target.value)}
-          className="w-full p-2 border rounded-md"
+          className="w-full p-3 border rounded-lg mb-4"
         >
           <option value="">-- Select a Candidate --</option>
           {contestants.map((candidate, index) => (
-            <option key={index} value={candidate}>
-              {candidate}
-            </option>
+            <option key={index} value={candidate}>{candidate}</option>
           ))}
         </select>
+        <button
+          onClick={handleVote}
+          className={`w-full py-3 bg-blue-600 text-white rounded-lg font-semibold ${loading ? "opacity-50" : "hover:bg-blue-700"} transition`}
+          disabled={loading}
+        >
+          {loading ? "Submitting Vote..." : "Vote"}
+        </button>
       </div>
 
-      {/* Vote Button */}
-      <button
-        onClick={handleVote}
-        className={`w-30 p-3 bg-blue-500 text-white rounded-md font-semibold ${
-          loading ? "opacity-50" : ""
-        }`}
-        disabled={loading}
-      >
-        {loading ? "Submitting Vote..." : "Vote"}
-      </button>
-
-      <div className="bg-white shadow-md rounded-lg p-6 mt-8 w-full max-w-md">
-  <h2 className="text-2xl font-semibold mb-4 text-gray-700">Winner</h2>
-  <button
-    onClick={winnerAnnounce}
-    className="w-40 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
-  >
-    Announce Winner
-  </button>
-  <div className="mt-4 text-gray-800">
-    {winner ? (
-      <p className="text-lg font-bold">{winner}</p>
-    ) : (
-      <p className="text-sm text-gray-600">No winner announced yet.</p>
-    )}
-  </div>
-</div>
-
-
+      <div className="bg-white shadow-lg rounded-xl p-6 mt-8 w-full max-w-lg">
+        <h2 className="text-3xl font-bold mb-4 text-purple-700">Winner</h2>
+        <button
+          onClick={winnerAnnounce}
+          className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-semibold"
+        >
+          Announce Winner
+        </button>
+        <div className="mt-4 text-center text-gray-800">
+          {winner ? (
+            <p className="text-xl font-bold">🎉 Winner: {winner} 🎉</p>
+          ) : (
+            <p className="text-md text-gray-500">No winner announced yet.</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
